@@ -28,9 +28,9 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     }
 
     /// <summary>
-    /// Subclass must give a root to its Saying tree
+    /// The dialog tree that will execute
     /// </summary>
-    protected abstract Saying RootSaying { get; }
+    protected abstract Saying DialogTree { get; }
 
     public void Start()
     {
@@ -41,7 +41,17 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             Unipix = Resources.Load<Font>("Unipix");
         }
 
-        this.currentSaying = RootSaying;
+        this.UpdateDialogTree();
+    }
+
+    /// <summary>
+    /// Sets the current dialog state
+    /// by checking the game conditions
+    /// to determine which dialog tree to initialize
+    /// </summary>
+    private void UpdateDialogTree()
+    {
+        this.currentSaying = this.DialogTree;
     }
 
     public override float DistanceActionable { get; } = 1000f;

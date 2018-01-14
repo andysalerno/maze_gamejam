@@ -1,7 +1,7 @@
 ﻿public class Green_Box_PlayerInteraction : Box_PlayerInteraction
 {
 
-    protected override Saying RootSaying
+    protected override Saying DialogTree
     {
         get
         {
@@ -11,6 +11,9 @@
                 .SetNextSaying(new Saying("You don't understand.", Unipix))
                 .SetNextSaying(new Saying("You don't understand.", Unipix))
                 .SetNextSaying(new Saying("You don't understand.", Unipix));
+
+
+            // I'm not like Yellow!! I won't just *tell* you the answers!!
 
             return rootSaying;
         }

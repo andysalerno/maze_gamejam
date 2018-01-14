@@ -58,11 +58,13 @@ public class PlayerInteract : MonoBehaviour
 
                 if (interaction == null)
                 {
+                    Debug.Log("No interaction found.");
                     return;
                 }
 
                 if (DistanceTo(interaction) <= interaction.DistanceActionable)
                 {
+                    Debug.Log("Executing interaction.");
                     interaction.Action(this);
                 }
             }

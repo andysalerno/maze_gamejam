@@ -1,6 +1,6 @@
 ﻿public class BoxInfo3_PlayerInteractionAction : Box_PlayerInteraction
 {
-    protected override Saying RootSaying
+    protected override Saying DialogTree
     {
         get
         {
