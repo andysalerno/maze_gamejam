@@ -16,7 +16,6 @@ public class PlayerTextDisplay : MonoBehaviour
 
     public void ClearText()
     {
-        Debug.Log("clearing text!");
         this.currentlyDisplayingText.ExitAnimation();
         this.currentlyDisplayingText = null;
     }

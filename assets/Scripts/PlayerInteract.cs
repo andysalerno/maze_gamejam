@@ -35,7 +35,6 @@ public class PlayerInteract : MonoBehaviour
             // if there is any text showing, clear it and exit
             if (this.textDisplay.IsShowingText())
             {
-                Debug.Log("Is showing text!");
                 this.textDisplay.ClearText();
 
                 // return if you don't want to allow displaying multiple

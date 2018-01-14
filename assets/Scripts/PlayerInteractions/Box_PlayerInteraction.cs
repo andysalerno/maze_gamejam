@@ -51,7 +51,15 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     /// </summary>
     private void UpdateDialogTree()
     {
-        this.currentSaying = this.DialogTree;
+        var tipOfTree = this.DialogTree;
+        if (tipOfTree != null)
+        {
+            // DialogTree may be null in cases
+            // where the current looping leaf of one tree
+            // should continue looping until some trigger event
+            // allows us to move on
+            this.currentSaying = tipOfTree;
+        }
     }
 
     public override float DistanceActionable { get; } = 1000f;
@@ -63,12 +71,19 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             return;
         }
 
+        // before anything else, perform the callback
+        if (this.currentSaying.sayingCallback != null)
+        {
+            this.currentSaying.sayingCallback.callBackMethod(source);
+        }
+
+        if (this.currentSaying.IsLeaf())
+        {
+            this.UpdateDialogTree();
+        }
+
         if (source.TryShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font)))
         {
-            if (this.currentSaying.sayingCallback != null)
-            {
-                this.currentSaying.sayingCallback.callBackMethod(source);
-            }
             if (!this.currentSaying.IsBranchingSaying)
             {
                 this.currentSaying = this.currentSaying.NextSaying;
@@ -172,6 +187,51 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             return this;
         }
 
+        /// <summary>
+        /// True if this is a leaf node,
+        /// *including if it refers to itself*,
+        /// but NOT if it is part of a cycle larger than just itself
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLeaf()
+        {
+            return
+            (this.NextSaying == null || this.NextSaying == this)
+            && (this.YesSaying == null || this.YesSaying == this)
+            && (this.NoSaying == null || this.NoSaying == this);
+        }
+
+        /// <summary>
+        /// For convenience,
+        /// walk down the tree from this node
+        /// and give every leaf branch found the given callback
+        /// </summary>
+        /// <param name="callback"></param>
+        public void GiveAllEndingsCallback(ISayingCallback callback)
+        {
+            bool foundAnyChildren = false;
+            if (this.NextSaying != null && this.NextSaying != this)
+            {
+                this.NextSaying.GiveAllEndingsCallback(callback);
+                foundAnyChildren = true;
+            }
+            if (this.YesSaying != null && this.YesSaying != this)
+            {
+                this.YesSaying.GiveAllEndingsCallback(callback);
+                foundAnyChildren = true;
+            }
+            if (this.NoSaying != null && this.NoSaying != this)
+            {
+                this.NoSaying.GiveAllEndingsCallback(callback);
+                foundAnyChildren = true;
+            }
+
+            if (!foundAnyChildren)
+            {
+                this.sayingCallback = callback;
+            }
+        }
+
         public Saying(string text, Font font)
         {
             this.Text = text;
@@ -191,6 +251,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         /// Throws if the end is a yes/no branch instead
         /// of an empty NextSaying.
         /// </summary>
+        /// <remarks>This will buffer overflow if you have a loop! </remarks>
         public Saying GetLast()
         {
             Saying cursor = this;
@@ -215,7 +276,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         /// This node has a yes/no branching option.
         /// Throws if none found.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>This will buffer overflow if you have a loop! </remarks>
         public Saying GetYesNo()
         {
             Saying cursor = this;

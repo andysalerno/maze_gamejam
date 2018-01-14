@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
 {
@@ -6,7 +7,7 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
     {
         get
         {
-            var rootSaying = new Saying("Sigh...", Amatic);
+            var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall());
             rootSaying
                 .SetNextSaying(new Saying(":(", Amatic))
                 .SetNextSaying(new Saying("You can't help me...", Amatic))
@@ -16,6 +17,15 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
             rootSaying.GetLast().SetNextSaying(rootSaying);
 
             return rootSaying;
+        }
+    }
+
+    private class MetSadRedwall : Saying.ISayingCallback
+    {
+        public void callBackMethod(PlayerInteract playerInteract)
+        {
+            Debug.Log("dialog event: met sad redwall");
+            SceneLevelVars.MetSadRedwall = true;
         }
     }
 

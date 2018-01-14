@@ -7,12 +7,16 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
     {
         get
         {
-            if (SceneLevelVars.YellowDoFirstDialog)
+            if (!SceneLevelVars.YellowFirstDialogComplete)
             {
                 return FirstEpochBranch();
             }
+            else if(SceneLevelVars.YellowFirstDialogComplete && SceneLevelVars.MetSadRedwall)
+            {
+                return RedwallBranch();
+            }
 
-            return new Saying("[error state]", Amatic).Loop();
+            return null;
         }
     }
 
@@ -85,6 +89,8 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
         nextGreatHintEnd.SetNextSaying(isBlueOutThere);
 
+        rootSaying.GiveAllEndingsCallback(new FirstBranchComplete());
+
         return rootSaying;
     }
 
@@ -121,12 +127,12 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
             .SetNextSaying(new Saying("Then, for the big finale,", Amatic))
             .SetNextSaying(new Saying("Spin around while staying put!", Amatic))
             .SetNextSaying(new Saying("Get all that?", Amatic))
-                .SetYesSaying(new Saying("Now get out there and show that wall some moves!", Amatic, new AddDanceDetectorCallback()))
+                .SetYesSaying(new Saying("Now get out there and show that wall some moves!", Amatic, new AddDanceDetectorCallback()).Loop())
                 .SetNoSaying(danceInstructions);
 
         danceInstructions.GetYesNo().YesSaying.SetNextSaying(bustAMove);
 
-        metRedwall.GetYesNo().YesSaying.SetNextSaying(new Saying("Then get out there and show him some moves!", Amatic));
+        metRedwall.GetYesNo().YesSaying.SetNextSaying(new Saying("Then get out there and show him some moves!", Amatic, new AddDanceDetectorCallback()).Loop());
         metRedwall.GetYesNo().NoSaying.SetNextSaying(danceInstructions);
 
         return metRedwall;
@@ -140,10 +146,20 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
         }
     }
 
+    private class FirstBranchComplete : Saying.ISayingCallback
+    {
+        public void callBackMethod(PlayerInteract playerInteract)
+        {
+            Debug.Log("dialog event: yellow first branch complete");
+            SceneLevelVars.YellowFirstDialogComplete = true;
+        }
+    }
+
     private class LieAboutBlueTalking : Saying.ISayingCallback
     {
         public void callBackMethod(PlayerInteract playerInteract)
         {
+            Debug.Log("dialog event: lied about blue talking");
             SceneLevelVars.LiedAboutBlueTalking = true;
         }
     }
@@ -153,6 +169,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
     {
         public void callBackMethod(PlayerInteract playerInteract)
         {
+            Debug.Log("dialog event: added dance detector");
             playerInteract.gameObject.AddComponent<DanceDetector>();
         }
     }
