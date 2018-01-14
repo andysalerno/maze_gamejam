@@ -8,4 +8,14 @@ public class SceneLevelVars : MonoBehaviour
 
     // in the first dialog with yellow, true if you lie
     public static bool LiedAboutBlueTalking = false;
+
+    // when the dance for Redwall is done
+    public static bool RedwallDanceComplete = true;
+
+    // TODO: implement to dump a "save" file
+    // of the current game state values
+    public static void DumpToText()
+    {
+
+    }
 }

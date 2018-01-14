@@ -32,6 +32,9 @@ public class DanceDetector : MonoBehaviour
 
     private Redwall_PlayerInteractionAction redwallInteraction;
 
+    // used for spin move
+    private Transform cameraTransform;
+
     private bool isOnDanceFloor = false;
 
     // when we are testing for the dance moves
@@ -39,11 +42,15 @@ public class DanceDetector : MonoBehaviour
 
     // when we are testing for the big spin at end
     private bool isTestingForSpin = false;
+    // the starting angle of the spin, recording when the dance section is complete
+    // after 360 degrees, the spin is complete
+    private float spinDistance = 0;
+    private const float SpinDistanceRequired = 600;
+    private float? lastFrameAngle = null;
 
     void Start()
     {
-        // for debugging only, delete this call soon
-        this.StartTestingForDance();
+        this.cameraTransform = this.GetComponentInChildren<Camera>().transform;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -77,7 +84,27 @@ public class DanceDetector : MonoBehaviour
 
     private void RecordSpin()
     {
+        if (this.lastFrameAngle == null)
+        {
+            this.lastFrameAngle = this.cameraTransform.rotation.eulerAngles.y;
+            return;
+        }
 
+        // yes, it is y for some reason
+        var currentX = this.cameraTransform.rotation.eulerAngles.y;
+
+        this.spinDistance += Mathf.Abs(currentX - this.lastFrameAngle.Value);
+
+        // update tracking status
+        this.lastFrameAngle = currentX;
+
+        if (this.spinDistance >= SpinDistanceRequired)
+        {
+            // you've finished it
+            this.redwallInteraction.DanceCompleteTrigger();
+        }
+
+        Debug.Log($"spin distance: {this.spinDistance}");
     }
 
     private void RecordDanceMoves()
@@ -101,23 +128,15 @@ public class DanceDetector : MonoBehaviour
             movements.Add(Movements.Right);
         }
 
-        //if (this.movements.Count >= CompleteDance.Count)
-        //{
-        //    string danceSoFar = string.Join(", ", this.movements.GetRange(movements.Count - CompleteDance.Count, CompleteDance.Count).ToArray());
-        //    Debug.Log($"Dance so far: {danceSoFar}");
-        //    Debug.Log($"Need to do:   {string.Join(", ", CompleteDance.ToArray())}");
-        //}
-
         if (this.IsDanceHalfway())
         {
-            this.redwallInteraction.SetFaceSurprise();
+            this.redwallInteraction.DanceHalfwayTrigger();
         }
         if (this.IsDanceComplete())
         {
-            Debug.Log("Dance complete!!!!");
+            Debug.Log("Dance section complete!!!!");
             this.isTestingForDance = false;
             this.isTestingForSpin = true;
-            this.redwallInteraction.SetFaceHappy();
         }
     }
 

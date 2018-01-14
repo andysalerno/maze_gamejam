@@ -19,18 +19,24 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
         }
     }
 
-    // TODO: animate this, like a typing animation
-    public void SetFaceSurprise()
+    public void DanceHalfwayTrigger()
     {
         var text = this.GetComponentInChildren<Text>();
-
-        text.text = ":O !!!";
+        text.text = ":/";
     }
 
-    public void SetFaceHappy()
+    public void DanceCompleteTrigger()
     {
         var text = this.GetComponentInChildren<Text>();
+        text.text = @"XD";
 
-        text.text = ":)";
+        SceneLevelVars.RedwallDanceComplete = true;
+    }
+
+
+    // implement to make the wall happier
+    public void BeginDancing()
+    {
+
     }
 }
