@@ -64,7 +64,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
     public override float DistanceActionable { get; } = 1000f;
 
-    public override void Action(PlayerInteract source)
+    public override void Action(PlayerInteract player)
     {
         if (this.currentSaying == null)
         {
@@ -74,7 +74,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         // before anything else, perform the callback
         if (this.currentSaying.sayingCallback != null)
         {
-            this.currentSaying.sayingCallback.callBackMethod(source);
+            this.currentSaying.sayingCallback.callBackMethod(player, this);
         }
 
         if (this.currentSaying.IsLeaf())
@@ -82,7 +82,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             this.UpdateDialogTree();
         }
 
-        if (source.TryShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font)))
+        if (player.TryShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font)))
         {
             if (!this.currentSaying.IsBranchingSaying)
             {
@@ -92,7 +92,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             {
                 // this saying requests a yes/no answer from the player
                 // the callback with advance to the next Saying based on response
-                source.TryRegisterHeadNodCallback(this);
+                player.TryRegisterHeadNodCallback(this);
             }
         }
     }
@@ -108,7 +108,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     {
         public interface ISayingCallback
         {
-            void callBackMethod(PlayerInteract playerInteract);
+            void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee);
         }
 
         public string Text { get; private set; }

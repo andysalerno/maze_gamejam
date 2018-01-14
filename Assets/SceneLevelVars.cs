@@ -13,6 +13,7 @@ public class SceneLevelVars : MonoBehaviour
     // when the dance for Redwall is done
     public static bool MetSadRedwall = false;
     public static bool RedwallDanceComplete = false;
+    public static bool RedwallHappyDialogComplete = false;
 
     // TODO: implement to dump a "save" file
     // of the current game state values
