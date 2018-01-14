@@ -3,6 +3,10 @@
 public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 {
 
+    /// <summary>
+    /// returning null indicates we do not have a new dialog tree for you yet
+    /// and you should continue with your existing one
+    /// </summary>
     protected override Saying DialogTree
     {
         get
@@ -11,7 +15,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
             {
                 return FirstEpochBranch();
             }
-            else if(SceneLevelVars.YellowFirstDialogComplete && SceneLevelVars.MetSadRedwall)
+            else if(SceneLevelVars.YellowFirstDialogComplete && SceneLevelVars.MetSadRedwall && !SceneLevelVars.YellowRedwallDialogComplete)
             {
                 return RedwallBranch();
             }
@@ -64,7 +68,8 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
         // is Blue out there??
         var blueSaidNothing = new Saying(":(", Amatic);
         blueSaidNothing.SetNextSaying(new Saying("I didn't think so...", Amatic)
-            .SetNextSaying_Parent(new Saying("...well, come find me if you ever need help.", Amatic)));
+            .SetNextSaying_Parent(new Saying("...well, come find me if you ever need help.", Amatic)
+            .SetNextSaying_Parent(betterLeave)));
 
         var blueSaidSomething = new Saying("...that's a lie, isn't it.", Amatic, new LieAboutBlueTalking());
         blueSaidSomething
@@ -170,6 +175,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
         public void callBackMethod(PlayerInteract playerInteract)
         {
             Debug.Log("dialog event: added dance detector");
+            SceneLevelVars.YellowRedwallDialogComplete = true;
             playerInteract.gameObject.AddComponent<DanceDetector>();
         }
     }

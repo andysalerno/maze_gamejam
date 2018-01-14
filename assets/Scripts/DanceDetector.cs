@@ -38,7 +38,7 @@ public class DanceDetector : MonoBehaviour
     private bool isOnDanceFloor = false;
 
     // when we are testing for the dance moves
-    private bool isTestingForDance = false;
+    private bool isTestingForDance = true;
 
     // when we are testing for the big spin at end
     private bool isTestingForSpin = false;
