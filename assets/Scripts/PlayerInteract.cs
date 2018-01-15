@@ -17,7 +17,6 @@ public class PlayerInteract : MonoBehaviour
         this.camera = this.GetComponentInChildren<Camera>();
         this.textDisplay = this.GetComponentInChildren<PlayerTextDisplay>();
         this.headNodder = this.GetComponentInChildren<HeadNodDetector>();
-        //this.countdownDisplay = GetComponentInChildren<CountdownDisplay>();
     }
 
     void Update()
@@ -26,7 +25,6 @@ public class PlayerInteract : MonoBehaviour
         {
             var breadcrumbObj = Instantiate(this.breadcrumb, null, true);
             var crumbPos = this.camera.transform.position + this.camera.transform.forward * 2;
-            // crumbPos -= this.camera.transform.up * 1;
             crumbPos.y = this.camera.transform.position.y;
             breadcrumbObj.SetPositionAndRotation(crumbPos, Quaternion.Euler(90, 0, 0));
         }
