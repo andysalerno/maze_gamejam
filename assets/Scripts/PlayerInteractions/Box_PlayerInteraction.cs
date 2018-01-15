@@ -187,6 +187,15 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             return this;
         }
 
+        public Saying ForceLeaf()
+        {
+            this.IsForcedLeaf = true;
+
+            return this;
+        }
+
+        private bool IsForcedLeaf { get; set; }
+
         /// <summary>
         /// True if this is a leaf node,
         /// *including if it refers to itself*,
@@ -195,6 +204,14 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         /// <returns></returns>
         public bool IsLeaf()
         {
+            // bit hacky, but we might want to force
+            // a saying to be a transition saying
+            // even if it has children
+            if (this.IsForcedLeaf)
+            {
+                return true;
+            }
+
             return
             (this.NextSaying == null || this.NextSaying == this)
             && (this.YesSaying == null || this.YesSaying == this)

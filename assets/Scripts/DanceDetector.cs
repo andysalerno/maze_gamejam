@@ -98,13 +98,21 @@ public class DanceDetector : MonoBehaviour
         // update tracking status
         this.lastFrameAngle = currentX;
 
+        Debug.Log($"spin distance: {this.spinDistance}");
+
         if (this.spinDistance >= SpinDistanceRequired)
         {
             // you've finished it
             this.redwallInteraction.DanceCompleteTrigger();
+            this.RemoveThisScript();
         }
 
-        Debug.Log($"spin distance: {this.spinDistance}");
+    }
+
+    private void RemoveThisScript()
+    {
+        // all done, remove this behavior from gameobj
+        Destroy(this);
     }
 
     private void RecordDanceMoves()

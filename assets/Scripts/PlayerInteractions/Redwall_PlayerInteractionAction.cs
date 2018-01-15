@@ -7,29 +7,27 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
     {
         get
         {
-            if (!SceneLevelVars.RedwallDanceComplete)
+            if (!SceneLevelVars.MetSadRedwall)
             {
                 return this.FirstContact();
             }
-            else if (!SceneLevelVars.RedwallHappyDialogComplete)
+            else if (SceneLevelVars.RedwallDanceComplete)
             {
                 return this.DanceCompleteDialog();
             }
-            else
-            {
-                return this.HappyLoopedDialog();
-            }
+
+            return null;
         }
     }
 
     private Saying FirstContact()
     {
-        var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall());
+        var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall()).ForceLeaf();
         rootSaying
-            .SetNextSaying(new Saying(":(", Amatic))
-            .SetNextSaying(new Saying("You can't help me...", Amatic))
-            .SetNextSaying(new Saying("Just go...", Amatic))
-            .SetNextSaying(new Saying("There's no point...", Amatic));
+            .SetNextSaying(new Saying(":(", Amatic).ForceLeaf())
+            .SetNextSaying(new Saying("You can't help me...", Amatic).ForceLeaf())
+            .SetNextSaying(new Saying("Just go...", Amatic).ForceLeaf())
+            .SetNextSaying(new Saying("There's no point...", Amatic).ForceLeaf());
 
         rootSaying.GetLast().SetNextSaying(rootSaying);
 
@@ -45,19 +43,14 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
             .SetNextSaying(new Saying("Stand back...", Amatic))
             .SetNextSaying(new Saying("And check this out!!", Amatic, new BeginDancingTrigger()));
 
-        return rootSaying;
-    }
+        var loopedSaying = new Saying("Get down!!", Amatic);
+        loopedSaying
+            .SetNextSaying(new Saying("Feel the beat!", Amatic))
+            .SetNextSaying(new Saying("Awww yeah!", Amatic))
+            .SetNextSaying(new Saying("Don't stop the music!", Amatic))
+            .SetNextSaying(loopedSaying);
 
-    private Saying HappyLoopedDialog()
-    {
-        var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall());
-        rootSaying
-            .SetNextSaying(new Saying(":(", Amatic))
-            .SetNextSaying(new Saying("You can't help me...", Amatic))
-            .SetNextSaying(new Saying("Just go...", Amatic))
-            .SetNextSaying(new Saying("There's no point...", Amatic));
-
-        rootSaying.GetLast().SetNextSaying(rootSaying);
+        rootSaying.GetLast().SetNextSaying(loopedSaying);
 
         return rootSaying;
     }
@@ -83,14 +76,12 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
         var text = this.GetComponentInChildren<Text>();
         text.text = @"XD";
 
+        this.BeginDancing();
         SceneLevelVars.RedwallDanceComplete = true;
     }
 
-
-    // implement to make the wall happier
     public void BeginDancing()
     {
-        Debug.Log("Begin dancing!!!");
         this.gameObject.AddComponent<SpinScript>();
     }
 
