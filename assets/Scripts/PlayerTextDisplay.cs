@@ -16,7 +16,7 @@ public class PlayerTextDisplay : MonoBehaviour
 
     public void ClearText()
     {
-        this.currentlyDisplayingText.ExitAnimation();
+        this.currentlyDisplayingText.DoExitAnimation();
         this.currentlyDisplayingText = null;
     }
 
@@ -32,7 +32,7 @@ public class PlayerTextDisplay : MonoBehaviour
     /// Otherwise, does not show the text, and returns false;
     /// </summary>
     /// <param name="text"></param>
-    public bool TryShowText(string text, Font font, int fontSize)
+    public void ShowText(string text, Font font, int fontSize)
     {
         var gameObj = Instantiate(this.textTransform, this.canvas.transform, false).gameObject;
         var textObj = gameObj.GetComponent<Text>();
@@ -43,7 +43,22 @@ public class PlayerTextDisplay : MonoBehaviour
         textObj.font = font;
         textObj.fontSize = fontSize;
         textObj.text = text;
+    }
 
-        return true;
+    /// <summary>
+    /// Like <see cref="ShowText(string, Font, int)"/>, but evict
+    /// any currently displaying text first.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="font"></param>
+    /// <param name="fontSize"></param>
+    public void ForceShowText(string text, Font font, int fontSize)
+    {
+        if (this.currentlyDisplayingText != null)
+        {
+            this.currentlyDisplayingText.DoExitAnimation();
+        }
+
+        this.ShowText(text, font, fontSize);
     }
 }

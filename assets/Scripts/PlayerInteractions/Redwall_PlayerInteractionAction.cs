@@ -22,12 +22,12 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
 
     private Saying FirstContact()
     {
-        var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall()).ForceLeaf();
+        var rootSaying = new Saying("Sigh...", Amatic, new MetSadRedwall()).EndBranch();
         rootSaying
-            .SetNextSaying(new Saying(":(", Amatic).ForceLeaf())
-            .SetNextSaying(new Saying("You can't help me...", Amatic).ForceLeaf())
-            .SetNextSaying(new Saying("Just go...", Amatic).ForceLeaf())
-            .SetNextSaying(new Saying("There's no point...", Amatic).ForceLeaf());
+            .SetNextSaying(new Saying(":(", Amatic).EndBranch())
+            .SetNextSaying(new Saying("You can't help me...", Amatic).EndBranch())
+            .SetNextSaying(new Saying("Just go...", Amatic).EndBranch())
+            .SetNextSaying(new Saying("There's no point...", Amatic).EndBranch());
 
         rootSaying.GetLast().SetNextSaying(rootSaying);
 

@@ -15,6 +15,9 @@ public class SceneLevelVars : MonoBehaviour
     public static bool RedwallDanceComplete = false;
     public static bool RedwallHappyDialogComplete = false;
 
+    // was Blue switched on yet?
+    public static bool BlueBoxEnabled = false;
+
     // TODO: implement to dump a "save" file
     // of the current game state values
     public static void DumpToText()

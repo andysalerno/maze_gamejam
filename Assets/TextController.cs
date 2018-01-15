@@ -28,7 +28,7 @@ public class TextController : MonoBehaviour
         this.text = this.GetComponent<Text>();
     }
 
-    public void ExitAnimation()
+    public void DoExitAnimation()
     {
         this.doExiting = true;
     }

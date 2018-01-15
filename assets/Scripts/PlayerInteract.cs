@@ -75,9 +75,15 @@ public class PlayerInteract : MonoBehaviour
         return this.headNodder.TryRegisterCallBack(callback);
     }
 
-    public bool TryShowText(string text, Font font, int fontSize)
+    public void ShowText(string text, Font font, int fontSize)
     {
-        return this.textDisplay.TryShowText(text, font, fontSize);
+        this.textDisplay.ShowText(text, font, fontSize);
+    }
+
+    // evict whatever text is currently showing and show the given text
+    public void ForceShowText(string text, Font font, int fontSize)
+    {
+        this.textDisplay.ForceShowText(text, font, fontSize);
     }
 
     private float DistanceTo(MonoBehaviour monoObject)

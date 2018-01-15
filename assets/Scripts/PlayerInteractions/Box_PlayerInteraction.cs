@@ -28,6 +28,16 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     }
 
     /// <summary>
+    /// If you really need to, you can set the saying manually through here
+    /// In most cases, better to let the tree walk itself, however
+    /// </summary>
+    /// <param name="saying"></param>
+    public void SetCurrentSaying(Saying saying)
+    {
+        this.currentSaying = saying;
+    }
+
+    /// <summary>
     /// The dialog tree that will execute
     /// </summary>
     protected abstract Saying DialogTree { get; }
@@ -41,7 +51,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             Unipix = Resources.Load<Font>("Unipix");
         }
 
-        this.UpdateDialogTree();
+        this.ResetFromDialogTree();
     }
 
     /// <summary>
@@ -49,15 +59,13 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     /// by checking the game conditions
     /// to determine which dialog tree to initialize
     /// </summary>
-    private void UpdateDialogTree()
+    private void ResetFromDialogTree()
     {
         var tipOfTree = this.DialogTree;
         if (tipOfTree != null)
         {
-            // DialogTree may be null in cases
-            // where the current looping leaf of one tree
-            // should continue looping until some trigger event
-            // allows us to move on
+            // there was no next dialog branch ready
+            // so just keep looping on whatever you have currently
             this.currentSaying = tipOfTree;
         }
     }
@@ -77,23 +85,22 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             this.currentSaying.sayingCallback.callBackMethod(player, this);
         }
 
-        if (this.currentSaying.IsLeaf())
+        if (this.currentSaying.IsLeaf)
         {
-            this.UpdateDialogTree();
+            this.ResetFromDialogTree();
         }
 
-        if (player.TryShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font)))
+        player.ShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font));
+
+        if (!this.currentSaying.DoesSayingBranch)
         {
-            if (!this.currentSaying.IsBranchingSaying)
-            {
-                this.currentSaying = this.currentSaying.NextSaying;
-            }
-            else
-            {
-                // this saying requests a yes/no answer from the player
-                // the callback with advance to the next Saying based on response
-                player.TryRegisterHeadNodCallback(this);
-            }
+            this.currentSaying = this.currentSaying.NextSaying;
+        }
+        else
+        {
+            // this saying requests a yes/no answer from the player
+            // the callback with advance to the next Saying based on response
+            player.TryRegisterHeadNodCallback(this);
         }
     }
 
@@ -104,7 +111,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         Debug.Log("Head detected: " + wasHeadYes);
     }
 
-    protected class Saying
+    public class Saying
     {
         public interface ISayingCallback
         {
@@ -116,7 +123,8 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
         public ISayingCallback sayingCallback { get; private set; }
 
-        public bool IsBranchingSaying { get; private set; }
+        //public bool DoesSayingBranch { get; private set; }
+        public bool DoesSayingBranch => this.YesSaying != null || this.NoSaying != null;
 
         /// <summary>
         /// The next Saying to use
@@ -140,7 +148,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
         public Saying SetNextSaying(Saying nextSaying)
         {
-            this.IsBranchingSaying = false;
+            // this.DoesSayingBranch = false;
             this.NextSaying = nextSaying;
 
             this.NoSaying = null;
@@ -158,7 +166,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         /// <returns></returns>
         public Saying SetNextSaying_Parent(Saying nextSaying)
         {
-            this.IsBranchingSaying = false;
+            // this.DoesSayingBranch = false;
             this.NextSaying = nextSaying;
 
             this.NoSaying = null;
@@ -169,7 +177,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
         public Saying SetYesSaying(Saying yesSaying)
         {
-            this.IsBranchingSaying = true;
+            // this.DoesSayingBranch = true;
             this.YesSaying = yesSaying;
 
             this.NextSaying = null;
@@ -179,7 +187,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
         public Saying SetNoSaying(Saying noSaying)
         {
-            this.IsBranchingSaying = true;
+            // this.DoesSayingBranch = true;
             this.NoSaying = noSaying;
 
             this.NextSaying = null;
@@ -187,36 +195,36 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             return this;
         }
 
-        public Saying ForceLeaf()
+        public Saying EndBranch()
         {
-            this.IsForcedLeaf = true;
+            this.IsLeaf = true;
 
             return this;
         }
 
-        private bool IsForcedLeaf { get; set; }
+        public bool IsLeaf { get; private set; }
 
-        /// <summary>
-        /// True if this is a leaf node,
-        /// *including if it refers to itself*,
-        /// but NOT if it is part of a cycle larger than just itself
-        /// </summary>
-        /// <returns></returns>
-        public bool IsLeaf()
-        {
-            // bit hacky, but we might want to force
-            // a saying to be a transition saying
-            // even if it has children
-            if (this.IsForcedLeaf)
-            {
-                return true;
-            }
+        ///// <summary>
+        ///// True if this is a leaf node,
+        ///// *including if it refers to itself*,
+        ///// but NOT if it is part of a cycle larger than just itself
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool IsLeaf()
+        //{
+        //    // bit hacky, but we might want to force
+        //    // a saying to be a transition saying
+        //    // even if it has children
+        //    if (this.IsForcedLeaf)
+        //    {
+        //        return true;
+        //    }
 
-            return
-            (this.NextSaying == null || this.NextSaying == this)
-            && (this.YesSaying == null || this.YesSaying == this)
-            && (this.NoSaying == null || this.NoSaying == this);
-        }
+        //    return
+        //    (this.NextSaying == null || this.NextSaying == this)
+        //    && (this.YesSaying == null || this.YesSaying == this)
+        //    && (this.NoSaying == null || this.NoSaying == this);
+        //}
 
         /// <summary>
         /// For convenience,
