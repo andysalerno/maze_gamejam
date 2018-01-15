@@ -31,6 +31,8 @@ public class Blue_Box_PlayerInteraction : Box_PlayerInteraction
         // show a bunch of corruption
         public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
         {
+            SceneLevelVars.MetBlue = true;
+
             var existingBabble = playerInteract.GetComponent<BabbleCorruptionScript>();
 
             if (existingBabble == null)

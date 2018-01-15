@@ -10,6 +10,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     // Fonts available for child use
     protected static Font Amatic { get; private set; }
     protected static Font Unipix { get; private set; }
+    protected static Font Ostrich { get; private set; }
 
     private static int FontSize(Font font)
     {
@@ -49,6 +50,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             //Arial = Resources.GetBuiltinResource<Font>("Arial.ttf");
             Amatic = Resources.Load<Font>("Amatic-Bold");
             Unipix = Resources.Load<Font>("Unipix");
+            Ostrich = Resources.Load<Font>("OstrichSans-Heavy");
         }
 
         this.ResetFromDialogTree();
@@ -64,14 +66,27 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
         var tipOfTree = this.DialogTree;
         if (tipOfTree != null)
         {
-            // there was no next dialog branch ready
-            // so just keep looping on whatever you have currently
             this.currentSaying = tipOfTree;
         }
     }
 
     public override float DistanceActionable { get; } = 1000f;
 
+    /// <summary>
+    /// Dialog works like this:
+    /// 
+    /// We start by pulling a root node from the DialogTree,
+    /// which has its own logic to determine the root node.
+    /// 
+    /// We walk down the dialog tree,
+    /// performing all callbacks BEFORE showing the current Saying
+    /// 
+    /// After displaying a Saying node, we check if it was a EndBranch node,
+    /// and if it was, we reset the CurrentSaying by pulling from the DialogTree again.
+    /// 
+    /// If the dialog tree has nothing for us and gives null, we carry on without modifying CurrentSaying.
+    /// </summary>
+    /// <param name="player"></param>
     public override void Action(PlayerInteract player)
     {
         if (this.currentSaying == null)
@@ -85,14 +100,13 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
             this.currentSaying.sayingCallback.callBackMethod(player, this);
         }
 
-        if (this.currentSaying.IsLeaf)
-        {
-            this.ResetFromDialogTree();
-        }
-
         player.ShowText(this.currentSaying.Text, this.currentSaying.Font, FontSize(this.currentSaying.Font));
 
-        if (!this.currentSaying.DoesSayingBranch)
+        if (this.currentSaying.IsEndBranch && this.DialogTree != null)
+        {
+            this.currentSaying = this.DialogTree;
+        }
+        else if (!this.currentSaying.DoesSayingBranch)
         {
             this.currentSaying = this.currentSaying.NextSaying;
         }
@@ -197,12 +211,12 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
 
         public Saying EndBranch()
         {
-            this.IsLeaf = true;
+            this.IsEndBranch = true;
 
             return this;
         }
 
-        public bool IsLeaf { get; private set; }
+        public bool IsEndBranch { get; private set; }
 
         ///// <summary>
         ///// True if this is a leaf node,

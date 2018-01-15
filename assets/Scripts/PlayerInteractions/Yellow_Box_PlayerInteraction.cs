@@ -11,11 +11,24 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
     {
         get
         {
+            // first stage: always get the first dialog first
             if (!SceneLevelVars.YellowFirstDialogComplete)
             {
                 return FirstEpochBranch();
             }
-            else if(SceneLevelVars.YellowFirstDialogComplete && SceneLevelVars.MetSadRedwall && !SceneLevelVars.YellowRedwallDialogComplete)
+            
+            // if we haven't met blue, say this next
+            if (!SceneLevelVars.MetBlue && !SceneLevelVars.YellowSeenBlueDialogComplete)
+            {
+                return NotMetBlueBranch();
+            }
+
+            if (SceneLevelVars.MetBlue && !SceneLevelVars.YellowHaveYouMetBlueDialogComplete && !SceneLevelVars.MetSadRedwall)
+            {
+                return HaveYouMetBlueBranch();
+            }
+
+            if(SceneLevelVars.MetSadRedwall && !SceneLevelVars.YellowRedwallDialogComplete)
             {
                 return RedwallBranch();
             }
@@ -53,17 +66,34 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
         .SetNextSaying(new Saying("Give it a try!", Amatic))
         .SetNextSaying(new Saying("Did you try it yet?", Amatic))
         .SetNextSaying(new Saying("It doesn't actually work, but it's a great hint, isn't it!", Amatic))
-        .SetNextSaying(new Saying("Sorry, I'm still not very good at this...", Amatic))
-        .SetNextSaying(new Saying("No one ever finds my little corner here...", Amatic))
-        .SetNextSaying(new Saying("...and the last time someone did, I *really* screwed it up.", Amatic));
+        .SetNextSaying(new Saying("I just love giving hints.", Amatic))
+        .SetNextSaying(new Saying("Life is about helping others. That's my philosophy!", Amatic))
+        .SetNextSaying(new Saying("now I just need to establish some plot here!!", Amatic))
+        .SetNextSaying(new Saying("Anyway, you should get going!", Amatic))
+        .SetNextSaying(new Saying("Good luck out there!", Amatic).Loop().EndBranch());
 
         introEnd.YesSaying.NextSaying.SetNextSaying(nextGreatHint);
         introEnd.NoSaying.NextSaying.SetNextSaying(nextGreatHint);
 
-        // say '...' forever.
-        var dotdotdot = new Saying("...", Amatic).Loop();
+        rootSaying.GiveAllEndingsCallback(new FirstBranchComplete());
 
-        var betterLeave = new Saying("You should go now.", Amatic).Loop();
+        return rootSaying;
+    }
+
+    // when you talk to Yellow before meeting Blue
+    private Saying NotMetBlueBranch()
+    {
+        var root = new Saying("And let me know if you run into my friend Blue out there!", Amatic);
+        root.SetNextSaying(new Saying("Later!", Amatic, new NotYetSeenBlueDialogCallback()).Loop().EndBranch());
+
+        return root;
+    }
+
+    // if you have seen CorruptBlue and now you are talking to Yellow
+    private Saying HaveYouMetBlueBranch()
+    {
+        var dotdotdot = new Saying("...", Amatic, new HaveYouMetBlueDialogCallback()).Loop().EndBranch();
+        var betterLeave = new Saying("You should go now.", Amatic, new HaveYouMetBlueDialogCallback()).Loop().EndBranch();
 
         // is Blue out there??
         var blueSaidNothing = new Saying(":(", Amatic);
@@ -82,21 +112,18 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
         var isBlueOutThere = new Saying("Hey, I have a question for you...", Amatic);
         isBlueOutThere
-            .SetNextSaying(new Saying("is Blue still out there?", Amatic))
+            .SetNextSaying(new Saying("have you seen Blue out there?", Amatic))
                 .SetYesSaying(new Saying("Really? Did he mention me?", Amatic)
                     .SetYesSaying(blueSaidSomething)
                     .SetNoSaying(blueSaidNothing))
                 .SetNoSaying(new Saying("...", Amatic)
                     .SetNextSaying_Parent(new Saying("That's too bad....", Amatic)
-                    .SetNextSaying_Parent(new Saying("...better get going.", Amatic)
+                    .SetNextSaying_Parent(new Saying("I haven't heard from her in forever.", Amatic)
+                    .SetNextSaying_Parent(new Saying("...anyway, better get going.", Amatic)
                     .SetNextSaying_Parent(new Saying("Come find me if you ever need help!", Amatic)
-                    .SetNextSaying_Parent(dotdotdot)))));
+                    .SetNextSaying_Parent(dotdotdot))))));
 
-        nextGreatHintEnd.SetNextSaying(isBlueOutThere);
-
-        rootSaying.GiveAllEndingsCallback(new FirstBranchComplete());
-
-        return rootSaying;
+        return isBlueOutThere;
     }
 
     private Saying RedwallBranch()
@@ -114,11 +141,10 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
             .SetNextSaying(new Saying("He can't dance himself,", Amatic))
             .SetNextSaying(new Saying("But if you dance for him, it'll make him really happy!", Amatic))
             .SetNextSaying(new Saying("Do you know how to dance?", Amatic))
-                .SetYesSaying(new Saying("Awesome!", Amatic))
+                .SetYesSaying(new Saying("You don't have to lie to impress me!", Amatic))
                 .SetNoSaying(new Saying("That's fine, I'll tell you :)", Amatic));
 
         // dance instructions
-        var bustAMove = new Saying("Go bust a move!", Amatic).Loop();
 
         var danceInstructions = new Saying("The secret is to get all the steps just right.", Amatic);
         danceInstructions
@@ -135,10 +161,21 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
                 .SetYesSaying(new Saying("Now get out there and show that wall some moves!", Amatic, new AddDanceDetectorCallback()).Loop())
                 .SetNoSaying(danceInstructions);
 
-        danceInstructions.GetYesNo().YesSaying.SetNextSaying(bustAMove);
+        metRedwall.GetYesNo().YesSaying
+            .SetNextSaying(new Saying("I can tell just by looking at you that you couldn't dance to save your life!", Amatic))
+            .SetNextSaying(danceInstructions);
 
-        metRedwall.GetYesNo().YesSaying.SetNextSaying(new Saying("Then get out there and show him some moves!", Amatic, new AddDanceDetectorCallback()).Loop());
         metRedwall.GetYesNo().NoSaying.SetNextSaying(danceInstructions);
+
+        var needToHearAgain = new Saying("Need to hear those dance instructions again?", Amatic);
+        needToHearAgain.SetYesSaying(danceInstructions);
+        needToHearAgain.SetNoSaying(new Saying("Then go cheer that big wall up :)", Amatic)
+            .SetNextSaying(needToHearAgain));
+
+        var bustAMove = new Saying("Go bust a move!", Amatic);
+        bustAMove.SetNextSaying(needToHearAgain);
+
+        danceInstructions.GetYesNo().YesSaying.SetNextSaying(bustAMove);
 
         return metRedwall;
     }
@@ -157,6 +194,24 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
         {
             Debug.Log("dialog event: yellow first branch complete");
             SceneLevelVars.YellowFirstDialogComplete = true;
+        }
+    }
+
+    private class NotYetSeenBlueDialogCallback : Saying.ISayingCallback
+    {
+        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        {
+            Debug.Log("dialog event: seen blue dialog complete");
+            SceneLevelVars.YellowSeenBlueDialogComplete = true;
+        }
+    }
+
+    private class HaveYouMetBlueDialogCallback : Saying.ISayingCallback
+    {
+        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        {
+            Debug.Log("dialog event: have you met blue dialog complete");
+            SceneLevelVars.YellowHaveYouMetBlueDialogComplete = true;
         }
     }
 

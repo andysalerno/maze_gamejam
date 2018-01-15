@@ -7,7 +7,7 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
     {
         get
         {
-            if (!SceneLevelVars.MetSadRedwall)
+            if (!SceneLevelVars.MetSadRedwall && !SceneLevelVars.RedwallDanceComplete)
             {
                 return this.FirstContact();
             }
@@ -15,8 +15,10 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
             {
                 return this.DanceCompleteDialog();
             }
-
-            return null;
+            else
+            {
+                return null;
+            }
         }
     }
 

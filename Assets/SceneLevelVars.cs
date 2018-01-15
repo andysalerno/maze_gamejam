@@ -6,6 +6,8 @@ public class SceneLevelVars : MonoBehaviour
     public static bool YellowFirstDialogComplete = false;
     public static bool YellowRedwallDialogComplete = false;
     public static bool YellowDoRedDoorDialog = false;
+    public static bool YellowSeenBlueDialogComplete = false;
+    public static bool YellowHaveYouMetBlueDialogComplete = false;
 
     // in the first dialog with yellow, true if you lie
     public static bool LiedAboutBlueTalking = false;
@@ -16,7 +18,11 @@ public class SceneLevelVars : MonoBehaviour
     public static bool RedwallHappyDialogComplete = false;
 
     // was Blue switched on yet?
+    public static bool MetBlue = false;
     public static bool BlueBoxEnabled = false;
+
+    // Green
+    public static bool MetGreen = false;
 
     // TODO: implement to dump a "save" file
     // of the current game state values
