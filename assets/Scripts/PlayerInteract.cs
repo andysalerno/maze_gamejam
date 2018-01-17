@@ -45,7 +45,6 @@ public class PlayerInteract : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                var thingHit = hit.transform;
                 var colliderHit = hit.collider;
 
                 Debug.Log("Thing hit: " + colliderHit.name);
