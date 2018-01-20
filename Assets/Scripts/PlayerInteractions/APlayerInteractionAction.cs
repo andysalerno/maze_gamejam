@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class PlayerInteractionAction : MonoBehaviour
+public abstract class APlayerInteractionAction : MonoBehaviour
 {
     public abstract float DistanceActionable { get; }
 

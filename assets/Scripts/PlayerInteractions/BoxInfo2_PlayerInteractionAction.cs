@@ -1,4 +1,4 @@
-﻿public class BoxInfo2_PlayerInteractionAction : Box_PlayerInteraction
+﻿public class BoxInfo2_PlayerInteractionAction : ABox_PlayerInteraction
 {
     protected override Saying DialogTree
     {

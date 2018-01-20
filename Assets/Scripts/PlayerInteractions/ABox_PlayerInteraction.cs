@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDetector.IHeadNodCallback
+public abstract class ABox_PlayerInteraction : APlayerInteractionAction, HeadNodDetector.IHeadNodCallback
 {
     /// <summary>
     /// Set to the child's implemented RootSaying in Start()
@@ -11,6 +11,8 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     protected static Font Amatic { get; private set; }
     protected static Font Unipix { get; private set; }
     protected static Font Ostrich { get; private set; }
+
+    protected Font DefaultFont { get; set; }
 
     private static int FontSize(Font font)
     {
@@ -129,7 +131,7 @@ public abstract class Box_PlayerInteraction : PlayerInteractionAction, HeadNodDe
     {
         public interface ISayingCallback
         {
-            void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee);
+            void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee);
         }
 
         public string Text { get; private set; }

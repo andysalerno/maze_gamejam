@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
+public class Yellow_Box_PlayerInteraction : ABox_PlayerInteraction
 {
 
     /// <summary>
@@ -182,7 +182,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
     private class CutTimeCallback : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             playerInteract.gameObject.GetComponent<CountdownDisplay>().timeOnclockMs /= 2;
         }
@@ -190,7 +190,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
     private class FirstBranchComplete : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: yellow first branch complete");
             SceneLevelVars.YellowFirstDialogComplete = true;
@@ -199,7 +199,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
     private class NotYetSeenBlueDialogCallback : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: seen blue dialog complete");
             SceneLevelVars.YellowSeenBlueDialogComplete = true;
@@ -208,7 +208,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
     private class HaveYouMetBlueDialogCallback : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: have you met blue dialog complete");
             SceneLevelVars.YellowHaveYouMetBlueDialogComplete = true;
@@ -217,7 +217,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
 
     private class LieAboutBlueTalking : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: lied about blue talking");
             SceneLevelVars.LiedAboutBlueTalking = true;
@@ -227,7 +227,7 @@ public class Yellow_Box_PlayerInteraction : Box_PlayerInteraction
     // used in the RedWall dance section
     private class AddDanceDetectorCallback : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: added dance detector");
             SceneLevelVars.YellowRedwallDialogComplete = true;

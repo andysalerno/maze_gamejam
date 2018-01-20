@@ -47,10 +47,8 @@ public class PlayerInteract : MonoBehaviour
             {
                 var colliderHit = hit.collider;
 
-                Debug.Log("Thing hit: " + colliderHit.name);
-
                 // trigger the Actioned event of the thing hit, if it has one
-                var interaction = hit.collider.GetComponentInParent<PlayerInteractionAction>();
+                var interaction = hit.collider.GetComponentInParent<APlayerInteractionAction>();
 
                 if (interaction == null)
                 {
@@ -60,7 +58,7 @@ public class PlayerInteract : MonoBehaviour
 
                 if (DistanceTo(interaction) <= interaction.DistanceActionable)
                 {
-                    Debug.Log("Executing interaction.");
+                    Debug.Log($"Executing interaction: {interaction.GetType().Name}");
                     interaction.Action(this);
                 }
             }

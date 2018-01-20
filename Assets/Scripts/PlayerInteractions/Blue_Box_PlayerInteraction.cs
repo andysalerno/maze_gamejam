@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Blue_Box_PlayerInteraction : Box_PlayerInteraction
+public class Blue_Box_PlayerInteraction : ABox_PlayerInteraction
 {
     /// <summary>
     /// returning null indicates we do not have a new dialog tree for you yet
@@ -29,7 +29,7 @@ public class Blue_Box_PlayerInteraction : Box_PlayerInteraction
     private class CorruptCallback : Saying.ISayingCallback
     {
         // show a bunch of corruption
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             SceneLevelVars.MetBlue = true;
 

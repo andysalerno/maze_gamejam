@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
+public class Redwall_PlayerInteractionAction : ABox_PlayerInteraction
 {
     protected override Saying DialogTree
     {
@@ -60,7 +60,7 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
 
     private class MetSadRedwall : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             Debug.Log("dialog event: met sad redwall");
             SceneLevelVars.MetSadRedwall = true;
@@ -89,7 +89,7 @@ public class Redwall_PlayerInteractionAction : Box_PlayerInteraction
 
     private class BeginDancingTrigger : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             var redwallAction = (Redwall_PlayerInteractionAction)interactee;
 

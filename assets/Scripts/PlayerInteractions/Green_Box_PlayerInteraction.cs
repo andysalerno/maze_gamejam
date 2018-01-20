@@ -1,4 +1,4 @@
-﻿public class Green_Box_PlayerInteraction : Box_PlayerInteraction
+﻿public class Green_Box_PlayerInteraction : ABox_PlayerInteraction
 {
 
     protected override Saying DialogTree
@@ -36,7 +36,7 @@
 
     private class MetGreenAgent : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
             SceneLevelVars.MetGreen = true;
         }
@@ -44,7 +44,7 @@
 
     private class BlockEscape : Saying.ISayingCallback
     {
-        public void callBackMethod(PlayerInteract playerInteract, Box_PlayerInteraction interactee)
+        public void callBackMethod(PlayerInteract playerInteract, ABox_PlayerInteraction interactee)
         {
         }
     }
