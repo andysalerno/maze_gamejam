@@ -2,8 +2,6 @@
 
 public class AgraWall : MonoBehaviour
 {
-    // TDOO: have these guys spawn in on a trigger instead of always available
-
     /// <summary>
     /// True iff this AgraWall faces +/- X,
     /// instead of +/- Z
@@ -11,7 +9,7 @@ public class AgraWall : MonoBehaviour
     public bool facesX;
 
     private float speed = 4f;
-    private float resetSpeed = 0.75f;
+    private float resetSpeed = 1.00f;
 
     private Rigidbody rigidbody;
 

@@ -5,7 +5,7 @@ public class WalkThroughBigDoorTrigger : APlayerTrigger
     private Light mysteryLight;
 
     private const float finalIntensity = 3f;
-    private const float dimDurationMs = 2500;
+    private const float dimDurationMs = 250;
 
     private float dimDiff;
     private float dimTimeMs;
@@ -41,6 +41,7 @@ public class WalkThroughBigDoorTrigger : APlayerTrigger
         }
         else
         {
+            this.mysteryLight.intensity = Mathf.Max(this.mysteryLight.intensity, finalIntensity);
             Destroy(this);
         }
     }

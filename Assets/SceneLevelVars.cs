@@ -24,6 +24,9 @@ public class SceneLevelVars : MonoBehaviour
     // Green
     public static bool MetGreen = false;
 
+    // big door at beginning
+    public static bool MysteryDoorSlideUp = false;
+
     // TODO: implement to dump a "save" file
     // of the current game state values
     public static void DumpToText()
